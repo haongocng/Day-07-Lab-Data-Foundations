@@ -153,6 +153,7 @@ Dự thảo GTĐB lần 1:
 fixed_size: 114 chunks, avg 496.4
 by_sentences: 97 chunks, avg 523.4
 recursive: 102 chunks, avg 499.4
+```
 
 ---
 
