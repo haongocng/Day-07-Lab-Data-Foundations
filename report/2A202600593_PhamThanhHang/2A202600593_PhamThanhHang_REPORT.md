@@ -118,9 +118,9 @@ chunker = SentenceChunker(max_sentences_per_chunk=3)
 
 | Thành viên | Strategy | Retrieval Score (/10) | Điểm mạnh | Điểm yếu |
 |-----------|----------|----------------------|-----------|----------|
-| Tôi | SentenceChunker | 8/10 | Giữ câu trọn vẹn ý nghĩa pháp lý | LLM đôi khi thiếu ngữ cảnh rộng (bị mất bối cảnh của Điều/Khoản) |
-| Nguyễn Ngọc Hảo | RecursiveChunker | 9/10 | Giữ được trọn vẹn một Khoản luật | Code phức tạp hơn |
-| Ngô Đắc Lãm | FixedSizeChunker | 5/10 | Code đơn giản, chạy nhanh | Cắt lung tung khiến câu bị mất nghĩa |
+| Nguyễn Ngọc Hảo | RecursiveChunker | 8/10 | Chunk ổn định, phù hợp văn bản dài, giảm số lượng chunk cần tìm kiếm | Implementation hiện tại chưa khai thác hoàn toàn cấu trúc điều/khoản |
+| Ngô Đức Lãm | FixedSizeChunker | 7/10 | Dễ cài đặt, chunk đều, tốc độ xử lý nhanh | Dễ cắt ngang câu hoặc nội dung pháp lý |
+| Phạm Thanh Hằng (Tôi) | SentenceChunker | 7.5/10 | Giữ câu hoàn chỉnh, dễ đọc và dễ grounding | Chunk dài/ngắn không đều, có thể gom nhiều ý khác nhau |
 
 **Strategy nào tốt nhất cho domain này? Tại sao?**
 > Mặc dù `SentenceChunker` của tôi hoạt động khá tốt vì giữ được câu trọn vẹn, nhưng thực tế với domain văn bản luật, `RecursiveChunker` của bạn Nguyễn Ngọc Hảo có phần nhỉnh hơn. Văn bản luật được cấu trúc phân cấp chặt chẽ theo Điều, Khoản, Điểm (phân tách bởi dòng mới), nên cắt đệ quy theo đoạn văn sẽ giữ được context tốt hơn là cắt theo từng câu đơn lẻ.
@@ -169,40 +169,87 @@ tests/test_solution.py::TestProjectStructure::test_root_main_entrypoint_exists P
 
 | Pair | Sentence A | Sentence B | Dự đoán | Actual Score | Đúng? |
 |------|-----------|-----------|---------|--------------|-------|
-| 1 | Theo Luật Giao thông đường bộ, đường cao tốc là gì? | Đường cao tốc là đường dành cho xe cơ giới... | high | 0.075 | Không |
-| 2 | Quy định về việc thắt dây an toàn khi đi xe ô tô là gì? | Xe ô tô có trang bị dây an toàn thì người lái xe... | high | -0.084 | Không |
-| 3 | Hiệu lệnh của người điều khiển giao thông bao gồm những tín hiệu nào? | Hiệu lệnh của người điều khiển giao thông quy định như sau... | high | -0.070 | Không |
-| 4 | Luật Giao thông có cấm người đi bộ qua đường cao tốc không? | Người đi bộ, xe thô sơ, xe gắn máy, xe mô tô không được đi vào... | high | -0.222 | Không |
-| 5 | Người đi xe đạp được phép chở tối đa mấy người? | Người điều khiển xe đạp chỉ được chở một người... | high | 0.075 | Không |
+| 1 | Mức phạt vi phạm hành chính là bao nhiêu? | Chế tài xử phạt đối với hành vi vi phạm. | high | 0.045 | Không |
+| 2 | Trời hôm nay rất đẹp. | Luật doanh nghiệp năm 2020. | low | -0.185 | Đúng |
+| 3 | Đăng ký kinh doanh ở đâu? | Cơ quan nào cấp phép thành lập công ty? | high | 0.073 | Không |
+| 4 | Xin nghỉ phép năm. | Quy định về thời giờ nghỉ ngơi của người lao động. | high | -0.049 | Không |
+| 5 | Con chó đang ăn xương. | Con mèo đang uống sữa. | low | -0.018 | Đúng |
 
 **Kết quả nào bất ngờ nhất? Điều này nói gì về cách embeddings biểu diễn nghĩa?**
-> Kết quả cực kỳ đáng ngạc nhiên khi toàn bộ 5 cặp câu có ý nghĩa liên quan mật thiết với nhau (tập trung vào Luật Giao thông) lại có điểm số thực tế cực thấp (quanh mức 0) hoặc thậm chí là âm (-0.222). Điều này chứng minh rõ ràng: thuật toán Mock Embedder hiện tại (chỉ sử dụng Hash code) hoàn toàn không có khả năng hiểu ngữ nghĩa (semantic understanding). Nó chỉ tạo ra các vector ngẫu nhiên dựa trên các ký tự vô tri giác.
+> Kết quả các cặp câu hỏi (1, 3, 4) liên quan đến luật có điểm số thực tế cực thấp (gần 0 hoặc âm) dù ngữ nghĩa khá tương đồng là đáng ngạc nhiên nhất. Điều này cho thấy mô hình Mock Embedder sử dụng Hash đơn giản không có khả năng hiểu ngữ nghĩa (semantic understanding) mà chỉ sinh ra vector ngẫu nhiên dựa trên ký tự.
 
 ---
 
 ## 6. Results — Cá nhân (10 điểm)
 
 Chạy 5 benchmark queries của nhóm trên implementation cá nhân của bạn trong package `src`. **5 queries phải trùng với các thành viên cùng nhóm.**
-
 ### Benchmark Queries & Gold Answers (nhóm thống nhất)
+
 
 | # | Query | Gold Answer |
 |---|-------|-------------|
-| 1 | Theo Luật Giao thông đường bộ, đường cao tốc là gì? | Đường cao tốc là đường dành cho xe cơ giới, có dải phân cách chia đường cho xe chạy hai chiều riêng biệt; không giao nhau cùng mức với một hoặc các đường khác; được bố trí đầy đủ trang thiết bị phục vụ, bảo đảm giao thông liên tục, an toàn... |
-| 2 | Quy định về việc thắt dây an toàn khi đi xe ô tô là gì? | Xe ô tô có trang bị dây an toàn thì người lái xe và người ngồi hàng ghế phía trước trong xe ô tô phải thắt dây an toàn. |
-| 3 | Hiệu lệnh của người điều khiển giao thông bao gồm những tín hiệu nào? | a) Tay giơ thẳng đứng... b) Hai tay hoặc một tay dang ngang... c) Tay phải giơ về phía trước... |
-| 4 | Luật Trật tự, an toàn giao thông đường bộ năm 2024 quy định gì về trách nhiệm người tham gia giao thông? | Người tham gia giao thông phải tuân thủ các quy định về trật tự, an toàn giao thông đường bộ, chấp hành hiệu lệnh của người điều khiển giao thông và báo hiệu đường bộ. |
-| 5 | Nguyên tắc hoạt động giao thông đường bộ được quy định như thế nào? | 1. Hoạt động giao thông đường bộ phải bảo đảm thông suốt... 2. Phát triển giao thông đường bộ theo quy hoạch... |
+| 1 | Theo Luật Giao thông đường bộ, đường cao tốc là gì?| Đường cao tốc là đường dành cho xe cơ giới, có dải phân cách chia đường cho xe chạy hai chiều riêng biệt; không giao nhau cùng mức với một hoặc các đường khác; được bố trí đầy đủ trang thiết bị phục vụ, bảo đảm giao thông liên tục, an toàn, rút ngắn thời gian hành trình và chỉ cho xe ra, vào ở những điểm nhất định.
+
+
+(Nguồn: Luật Giao thông đường bộ số 23-2008-QH12, Điều 3, khoản 12) |
+| 2 | Quy định về việc thắt dây an toàn khi đi xe ô tô là gì?|Xe ô tô có trang bị dây an toàn thì người lái xe và người ngồi hàng ghế phía trước trong xe ô tô phải thắt dây an toàn.
+
+
+(Nguồn: Luật Giao thông đường bộ số 23-2008-QH12, Điều 9, khoản 2) |
+| 3 | Hiệu lệnh của người điều khiển giao thông bao gồm những tín hiệu nào?| Hiệu lệnh của người điều khiển giao thông quy định như sau:
+
+
+a) Tay giơ thẳng đứng để báo hiệu cho người tham gia giao thông ở các hướng dừng lại;
+
+
+b) Hai tay hoặc một tay dang ngang để báo hiệu cho người tham gia giao thông ở phía trước và ở phía sau người điều khiển giao thông phải dừng lại; người tham gia giao thông ở phía bên phải và bên trái của người điều khiển giao thông được đi;
+
+
+c) Tay phải giơ về phía trước để báo hiệu cho người tham gia giao thông ở phía sau và bên phải người điều khiển giao thông phải dừng lại; người tham gia giao thông ở phía trước người điều khiển giao thông được rẽ phải; người tham gia giao thông ở phía bên trái người điều khiển giao thông được đi tất cả các hướng; người đi bộ qua đường phải đi sau lưng người điều khiển giao thông.
+
+
+(Nguồn: Luật Giao thông đường bộ số 23-2008-QH12, Điều 10, khoản 2)|
+| 4 | Luật Trật tự, an toàn giao thông đường bộ năm 2024 quy định gì về trách nhiệm người tham gia giao thông?| (Câu trả lời chi tiết phụ thuộc vào nội dung thực tế của văn bản Luật 36-2024-QH15)
+
+
+Người tham gia giao thông phải tuân thủ các quy định về trật tự, an toàn giao thông đường bộ, chấp hành hiệu lệnh của người điều khiển giao thông và báo hiệu đường bộ.
+
+
+(Nguồn: Luật Trật tự, an toàn giao thông đường bộ của Quốc hội, số 36-2024-QH15)|
+| 5 | Nguyên tắc hoạt động giao thông đường bộ được quy định như thế nào?| Nguyên tắc hoạt động giao thông đường bộ bao gồm:
+
+
+1. Hoạt động giao thông đường bộ phải bảo đảm thông suốt, trật tự, an toàn, hiệu quả; góp phần phát triển kinh tế - xã hội, bảo đảm quốc phòng, an ninh và bảo vệ môi trường.
+
+
+2. Phát triển giao thông đường bộ theo quy hoạch, từng bước hiện đại và đồng bộ; gắn kết phương thức vận tải đường bộ với các phương thức vận tải khác.
+
+
+3. Quản lý hoạt động giao thông đường bộ được thực hiện thống nhất trên cơ sở phân công, phân cấp trách nhiệm, quyền hạn cụ thể, đồng thời có sự phối hợp chặt chẽ giữa các bộ, ngành và chính quyền địa phương các cấp.
+
+
+4. Bảo đảm trật tự, an toàn giao thông đường bộ là trách nhiệm của cơ quan, tổ chức, cá nhân.
+
+
+5. Người tham gia giao thông phải có ý thức tự giác, nghiêm chỉnh chấp hành quy tắc giao thông, giữ gìn an toàn cho mình và cho người khác. Chủ phương tiện và người điều khiển phương tiện phải chịu trách nhiệm trước pháp luật về việc bảo đảm an toàn của phương tiện tham gia giao thông đường bộ.
+
+
+6. Mọi hành vi vi phạm pháp luật giao thông đường bộ phải được phát hiện, ngăn chặn kịp thời, xử lý nghiêm minh, đúng pháp luật.
+
+
+(Nguồn: Luật Giao thông đường bộ số 23-2008-QH12, Điều 4)|
+
+
 
 ### Kết Quả Của Tôi
 
 | # | Query | Top-1 Retrieved Chunk (tóm tắt) | Score | Relevant? | Agent Answer (tóm tắt) |
 |---|-------|--------------------------------|-------|-----------|------------------------|
-| 1 | Theo Luật Giao thông đường bộ, đường cao tốc là gì? | Điều 59. Quyền và nghĩa vụ của người lái... | 0.397 | Không | Mock LLM Answer |
-| 2 | Quy định về việc thắt dây an toàn khi đi xe ô tô là gì? | Tín hiệu giao thông đường sắt  1. Hệ thố... | 0.471 | Không | Mock LLM Answer |
-| 3 | Hiệu lệnh của người điều khiển giao thông bao gồm những tín hiệu nào? | 3. Việc thẩm định an toàn giao thông của... | 0.434 | Không | Mock LLM Answer |
-| 4 | Luật Trật tự, an toàn giao thông đường bộ năm 2024 quy định gì về trách nhiệm người tham gia giao thông? | Biển số xe do cơ quan nhà nước có thẩm q... | 0.469 | Không | Mock LLM Answer |
-| 5 | Nguyên tắc hoạt động giao thông đường bộ được quy định như thế nào? | Chủ sở hữu hoặc người quản lý sử dụng cô... | 0.449 | Không | Mock LLM Answer |
+| 1 | Theo Luật Giao thông đường bộ, đường cao tốc là gì? | 3. Tổ chức đề nghị cấp Giấy chứng nhận n... | 0.481 | Không | Mock LLM Answer |
+| 2 | Quy định về việc thắt dây an toàn khi đi xe ô tô là gì? | Điều 53. Điều kiện tham gia giao thông c... | 0.433 | Không | Mock LLM Answer |
+| 3 | Hiệu lệnh của người điều khiển giao thông bao gồm những tín hiệu nào? | Bộ trưởng Bộ Giao thông vận tải quy định... | 0.428 | Không | Mock LLM Answer |
+| 4 | Luật Trật tự, an toàn giao thông đường bộ năm 2024 quy định gì về trách nhiệm người tham gia giao thông? | Trong trường hợp việc xây dựng, khai thá... | 0.438 | Không | Mock LLM Answer |
+| 5 | Nguyên tắc hoạt động giao thông đường bộ được quy định như thế nào? | d) Khi đi qua khoang thông thuyền của cầ... | 0.475 | Không | Mock LLM Answer |
 
 **Bao nhiêu queries trả về chunk relevant trong top-3?** 0 / 5
 
@@ -211,10 +258,10 @@ Chạy 5 benchmark queries của nhóm trên implementation cá nhân của bạ
 ## 7. What I Learned (5 điểm — Demo)
 
 **Điều hay nhất tôi học được từ thành viên khác trong nhóm:**
-> Tôi học được rằng việc sử dụng bộ Chunking dựa trên Regex kết hợp cấu trúc cây (tree-based) giúp việc bóc tách các Điều, Khoản luật chính xác 100% so với cắt theo độ dài cố định.
+> Việc sử dụng bộ Chunking dựa trên Regex kết hợp cấu trúc cây (tree-based) giúp việc bóc tách các Điều, Khoản luật chính xác 100% so với cắt theo độ dài cố định.
 
 **Điều hay nhất tôi học được từ nhóm khác (qua demo):**
-> Nhóm khác đã sử dụng metadata cực kì thông minh (gắn thẻ `chuong_thu` và `linh_vuc`) giúp thu hẹp vùng tìm kiếm và tăng độ chính xác của RAG lên đáng kể.
+> Nhóm khác đã sử dụng metadata cực kì thông minh (gắn thẻ "chương") giúp thu hẹp vùng tìm kiếm và tăng độ chính xác của RAG lên đáng kể.
 
 **Nếu làm lại, tôi sẽ thay đổi gì trong data strategy?**
 > Thay vì chunk mù mờ, tôi sẽ làm giàu dữ liệu (Data Enrichment) bằng cách tóm tắt các Khoản luật trước khi chunk và nhét thêm tiêu đề của Điều luật vào đầu mỗi chunk để LLM có thêm ngữ cảnh khi retrieve.
@@ -231,6 +278,6 @@ Chạy 5 benchmark queries của nhóm trên implementation cá nhân của bạ
 | My approach | Cá nhân | 10 / 10 |
 | Similarity predictions | Cá nhân | 5 / 5 |
 | Results | Cá nhân | 10 / 10 |
-| Core implementation (tests) | Cá nhân | 30 / 30 |
-| Demo | Nhóm | 5 / 5 |
-| **Tổng** | | **90 / 90** |
+| Core implementation (tests) | Cá nhân | 25 / 30 |
+| Demo | Nhóm | 0 / 5 |
+| **Tổng** | | **90 / 100** |
