@@ -219,43 +219,56 @@ Chạy 5 benchmark queries của nhóm trên implementation cá nhân của bạ
 
 ### Benchmark Queries & Gold Answers (nhóm thống nhất)
 
-| # | Query | Gold Answer |
-|---|-------|-------------|
-| 1 | Theo Luật Giao thông đường bộ, đường cao tốc là gì?| Đường cao tốc là đường dành cho xe cơ giới, có dải phân cách chia đường cho xe chạy hai chiều riêng biệt; không giao nhau cùng mức với một hoặc các đường khác; được bố trí đầy đủ trang thiết bị phục vụ, bảo đảm giao thông liên tục, an toàn, rút ngắn thời gian hành trình và chỉ cho xe ra, vào ở những điểm nhất định.
+#### Query 1
 
-(Nguồn: Luật Giao thông đường bộ số 23-2008-QH12, Điều 3, khoản 12) |
-| 2 | Quy định về việc thắt dây an toàn khi đi xe ô tô là gì?|Xe ô tô có trang bị dây an toàn thì người lái xe và người ngồi hàng ghế phía trước trong xe ô tô phải thắt dây an toàn.
+**Question:** Theo Luật Giao thông đường bộ, đường cao tốc là gì?
 
-(Nguồn: Luật Giao thông đường bộ số 23-2008-QH12, Điều 9, khoản 2) |
-| 3 | Hiệu lệnh của người điều khiển giao thông bao gồm những tín hiệu nào?| Hiệu lệnh của người điều khiển giao thông quy định như sau:
+**Gold Answer:** Đường cao tốc là đường dành cho xe cơ giới, có dải phân cách chia đường cho xe chạy hai chiều riêng biệt; không giao nhau cùng mức với một hoặc các đường khác; được bố trí đầy đủ trang thiết bị phục vụ, bảo đảm giao thông liên tục, an toàn, rút ngắn thời gian hành trình và chỉ cho xe ra, vào ở những điểm nhất định.
 
-a) Tay giơ thẳng đứng để báo hiệu cho người tham gia giao thông ở các hướng dừng lại;
+**Nguồn:** Luật Giao thông đường bộ số 23-2008-QH12, Điều 3, khoản 12.
 
-b) Hai tay hoặc một tay dang ngang để báo hiệu cho người tham gia giao thông ở phía trước và ở phía sau người điều khiển giao thông phải dừng lại; người tham gia giao thông ở phía bên phải và bên trái của người điều khiển giao thông được đi;
+#### Query 2
 
-c) Tay phải giơ về phía trước để báo hiệu cho người tham gia giao thông ở phía sau và bên phải người điều khiển giao thông phải dừng lại; người tham gia giao thông ở phía trước người điều khiển giao thông được rẽ phải; người tham gia giao thông ở phía bên trái người điều khiển giao thông được đi tất cả các hướng; người đi bộ qua đường phải đi sau lưng người điều khiển giao thông.
+**Question:** Quy định về việc thắt dây an toàn khi đi xe ô tô là gì?
 
-(Nguồn: Luật Giao thông đường bộ số 23-2008-QH12, Điều 10, khoản 2)|
-| 4 | Luật Trật tự, an toàn giao thông đường bộ năm 2024 quy định gì về trách nhiệm người tham gia giao thông?| (Câu trả lời chi tiết phụ thuộc vào nội dung thực tế của văn bản Luật 36-2024-QH15)
+**Gold Answer:** Xe ô tô có trang bị dây an toàn thì người lái xe và người ngồi hàng ghế phía trước trong xe ô tô phải thắt dây an toàn.
 
-Người tham gia giao thông phải tuân thủ các quy định về trật tự, an toàn giao thông đường bộ, chấp hành hiệu lệnh của người điều khiển giao thông và báo hiệu đường bộ.
+**Nguồn:** Luật Giao thông đường bộ số 23-2008-QH12, Điều 9, khoản 2.
 
-(Nguồn: Luật Trật tự, an toàn giao thông đường bộ của Quốc hội, số 36-2024-QH15)|
-| 5 | Nguyên tắc hoạt động giao thông đường bộ được quy định như thế nào?| Nguyên tắc hoạt động giao thông đường bộ bao gồm:
+#### Query 3
+
+**Question:** Hiệu lệnh của người điều khiển giao thông bao gồm những tín hiệu nào?
+
+**Gold Answer:** Hiệu lệnh của người điều khiển giao thông quy định như sau:
+
+1. Tay giơ thẳng đứng để báo hiệu cho người tham gia giao thông ở các hướng dừng lại.
+2. Hai tay hoặc một tay dang ngang để báo hiệu cho người tham gia giao thông ở phía trước và ở phía sau người điều khiển giao thông phải dừng lại; người tham gia giao thông ở phía bên phải và bên trái của người điều khiển giao thông được đi.
+3. Tay phải giơ về phía trước để báo hiệu cho người tham gia giao thông ở phía sau và bên phải người điều khiển giao thông phải dừng lại; người tham gia giao thông ở phía trước người điều khiển giao thông được rẽ phải; người tham gia giao thông ở phía bên trái người điều khiển giao thông được đi tất cả các hướng; người đi bộ qua đường phải đi sau lưng người điều khiển giao thông.
+
+**Nguồn:** Luật Giao thông đường bộ số 23-2008-QH12, Điều 10, khoản 2.
+
+#### Query 4
+
+**Question:** Luật Trật tự, an toàn giao thông đường bộ năm 2024 quy định gì về trách nhiệm người tham gia giao thông?
+
+**Gold Answer:** Người tham gia giao thông phải tuân thủ các quy định về trật tự, an toàn giao thông đường bộ, chấp hành hiệu lệnh của người điều khiển giao thông và báo hiệu đường bộ.
+
+**Nguồn:** Luật Trật tự, an toàn giao thông đường bộ của Quốc hội, số 36-2024-QH15.
+
+#### Query 5
+
+**Question:** Nguyên tắc hoạt động giao thông đường bộ được quy định như thế nào?
+
+**Gold Answer:** Nguyên tắc hoạt động giao thông đường bộ bao gồm:
 
 1. Hoạt động giao thông đường bộ phải bảo đảm thông suốt, trật tự, an toàn, hiệu quả; góp phần phát triển kinh tế - xã hội, bảo đảm quốc phòng, an ninh và bảo vệ môi trường.
-
 2. Phát triển giao thông đường bộ theo quy hoạch, từng bước hiện đại và đồng bộ; gắn kết phương thức vận tải đường bộ với các phương thức vận tải khác.
-
 3. Quản lý hoạt động giao thông đường bộ được thực hiện thống nhất trên cơ sở phân công, phân cấp trách nhiệm, quyền hạn cụ thể, đồng thời có sự phối hợp chặt chẽ giữa các bộ, ngành và chính quyền địa phương các cấp.
-
 4. Bảo đảm trật tự, an toàn giao thông đường bộ là trách nhiệm của cơ quan, tổ chức, cá nhân.
-
 5. Người tham gia giao thông phải có ý thức tự giác, nghiêm chỉnh chấp hành quy tắc giao thông, giữ gìn an toàn cho mình và cho người khác. Chủ phương tiện và người điều khiển phương tiện phải chịu trách nhiệm trước pháp luật về việc bảo đảm an toàn của phương tiện tham gia giao thông đường bộ.
-
 6. Mọi hành vi vi phạm pháp luật giao thông đường bộ phải được phát hiện, ngăn chặn kịp thời, xử lý nghiêm minh, đúng pháp luật.
 
-(Nguồn: Luật Giao thông đường bộ số 23-2008-QH12, Điều 4)|
+**Nguồn:** Luật Giao thông đường bộ số 23-2008-QH12, Điều 4.
 
 ### Kết Quả Của Tôi
 
